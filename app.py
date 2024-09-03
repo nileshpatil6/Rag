@@ -6,7 +6,7 @@ import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Configure your API key using Streamlit secrets
-API_KEY = st.secrets["API_KEY"]
+API_KEY = 'AIzaSyCrbeU4QGZYHXR2AIAfeiko5AN8NCerQ24' 
 genai.configure(api_key=API_KEY)
 
 # Function to extract text from PDF

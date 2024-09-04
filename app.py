@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = Flask(__name__)
 
 # Set up Google Gemini API
-API_KEY = 'YOUR_API_KEY'  # Replace with your actual API key
+API_KEY = 'AIzaSyCrbeU4QGZYHXR2AIAfeiko5AN8NCerQ24'  # Replace with your actual API key
 genai.configure(api_key=API_KEY)
 
 # Helper functions (same as before)

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>PDF Chat App</title>
+</head>
+<body>
+    <h1>Chat with Your PDF</h1>
+    <form id="upload-form">
+        <input type="file" name="file" id="file" accept="application/pdf">
+        <button type="submit">Upload PDF</button>
+    </form>
+    <div id="chat">
+        <input type="text" id="query" placeholder="Ask a question...">
+        <button id="ask-btn">Ask</button>
+        <p id="answer"></p>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                alert(result.error);
+            }
+        });
+
+        document.getElementById('ask-btn').addEventListener('click', async function() {
+            const query = document.getElementById('query').value;
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('answer').innerText = result.answer;
+            } else {
+                alert(result.error);
+            }
+        });
+    </script>
+</body>
+</html>

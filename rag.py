@@ -1,10 +1,10 @@
-import textwrap
-import numpy as np
+ import streamlit as st
+import PyPDF2
 import pandas as pd
-import PyPDF2  # For PDF text extraction
+import numpy as np
 import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
-from google.colab import files  # For file upload
+import textwrap
 
 # Set your API key
 API_KEY = 'AIzaSyCrbeU4QGZYHXR2AIAfeiko5AN8NCerQ24'  # Replace with your actual API key
@@ -56,45 +56,37 @@ def make_prompt(query, relevant_passages):
     """)
     return prompt
 
-def main():
-    # Upload file in Colab
-    uploaded = files.upload()
+# Streamlit UI
+st.title("PDF Question Answering App")
 
-    if not uploaded:
-        print("No file uploaded. Please upload a PDF file.")
-        return
+# PDF Upload
+uploaded_pdf = st.file_uploader("Upload a PDF", type="pdf")
 
-    pdf_filename = next(iter(uploaded.keys()))
-    
-    # Extract text from the uploaded PDF
-    with open(pdf_filename, 'rb') as pdf_file:
-        document_text = extract_text_from_pdf(pdf_file)
+if uploaded_pdf is not None:
+    # Extract text from uploaded PDF
+    document_text = extract_text_from_pdf(uploaded_pdf)
 
-    # Create overlapping chunks
+    # Create chunks
     chunks = create_chunks(document_text)
-
+    
     # Embed the chunks
     df = pd.DataFrame(chunks, columns=['Text'])
     df['Title'] = ['Chunk ' + str(i+1) for i in range(len(chunks))]
     df['Embeddings'] = df.apply(lambda row: embed_content(row['Title'], row['Text']), axis=1)
 
-    while True:
-        user_query = input("Enter your question (or 'exit' to quit): ")
-        if user_query.lower() == 'exit':
-            break
-        
-        # Find top relevant passages
-        top_passages = find_top_chunks(user_query, df, top_n=3)
+    # User Query
+    query = st.text_input("Ask a question")
+
+    if query:
+        # Find relevant passages
+        top_passages = find_top_chunks(query, df, top_n=3)
         
         # Create a prompt for the generative model
-        prompt = make_prompt(user_query, top_passages)
-        
-        # Get the answer from a generative model
+        prompt = make_prompt(query, top_passages)
+
+        # Get the answer from the generative model
         model = genai.GenerativeModel('gemini-1.5-pro-latest')
         answer = model.generate_content(prompt)
-        
-        print("Answer:", answer.text)
 
-if __name__ == "__main__":
-    main()
-    
+        # Display the answer
+        st.write("Answer:", answer.text)

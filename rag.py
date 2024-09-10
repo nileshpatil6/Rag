@@ -48,7 +48,7 @@ def make_prompt(query, relevant_passages):
     Be sure to respond in a complete sentence, being comprehensive, including all relevant background information. \
     However, you are talking to a non-technical audience, so be sure to break down complicated concepts and \
     strike a friendly and conversational tone. \
-    If the passage is irrelevant to the answer, you may ignore it.
+    try to be emotional chatbot and your a coustomer support bot so be good respectful and always speak in hindi \
     QUESTION: '{query}'
     PASSAGES: '{escaped}'
 
